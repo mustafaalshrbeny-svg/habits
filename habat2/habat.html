@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>عاداتي – متتبع العادات</title>
+<meta name="theme-color" content="#6d5efc">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="عاداتي">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{--bg:#f4f5fb;--card:#fff;--ink:#1b1d2e;--mute:#757a93;--line:#e3e5f0;--acc:#6d5efc;--ok:#6d5efc;
+--w1:#6d5efc;--w2:#18b4d8;--w3:#2fc46b;--w4:#f0506e;--w5:#f5a524;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d0e1a;--card:#161829;--ink:#eceefb;--mute:#8d92b0;--line:#272a40;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d0e1a;--card:#161829;--ink:#eceefb;--mute:#8d92b0;--line:#272a40;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Tahoma,"Noto Naskh Arabic",system-ui,sans-serif;line-height:1.5}
+.wrap{max-width:1100px;margin:0 auto;padding:14px 12px 40px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+h1{font-size:22px;margin:0}
+.nav{display:flex;align-items:center;gap:6px}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 12px}
+.btn:active{transform:scale(.97)}
+input[type=email],input[type=password]{background:transparent;border:1px solid var(--line);border-radius:10px;color:inherit;font:inherit}
+.mon{min-width:110px;text-align:center;font-weight:600}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.k{color:var(--mute);font-size:13px}.v{font-size:26px;font-weight:700}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px}
+.sec h2{font-size:16px;margin:0 0 10px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:separate;border-spacing:3px;min-width:100%}
+th,td{padding:0;text-align:center;font-size:12px}
+th.nm,td.nm{position:sticky;right:0;background:var(--card);z-index:2;text-align:right;min-width:128px;max-width:150px;padding:0 4px 0 8px;font-size:13px}
+td.nm input{width:100%;background:transparent;border:0;color:inherit;font:inherit;padding:6px 0}
+.wk{color:#fff;border-radius:6px;font-weight:600;padding:3px 0}
+.dn{color:var(--mute);height:22px}.dn.today{color:var(--acc);font-weight:800}
+.c{width:28px;height:28px;border-radius:7px;border:1.5px solid var(--line);background:transparent;display:block;margin:0 auto}
+.c.on{border-color:transparent;color:#fff;font-size:15px;line-height:1}
+.c.on::after{content:"✓"}
+td.pc{min-width:48px;color:var(--mute);font-size:12px;position:sticky;left:0;background:var(--card)}
+.sl{width:30px;border:1px solid var(--line);border-radius:6px;background:transparent;color:inherit;text-align:center;padding:3px 0;font-size:12px}
+.del{border:0;background:transparent;color:var(--mute);font-size:15px;padding:0 4px}
+.add{display:flex;gap:8px;margin-top:10px}
+.add input{flex:1;background:transparent;border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:inherit;font:inherit;min-width:0}
+.hb{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px 18px}
+.hr{display:flex;align-items:center;gap:8px;font-size:13px}
+.hr .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar{flex:0 0 90px;height:8px;border-radius:5px;background:var(--line);overflow:hidden}.bar i{display:block;height:100%;background:var(--acc);border-radius:5px}
+.hr b{width:40px;text-align:left;font-weight:600}
+svg{width:100%;height:auto;display:block}
+.two{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:800px){.two{grid-template-columns:1fr 1fr}}
+.note{color:var(--mute);font-size:12px;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1 style="display:flex;align-items:center;gap:10px"><span id="lg" style="width:38px;height:38px;display:inline-block"></span>عاداتي</h1>
+  <div class="nav"><button class="btn" id="nx">›</button><div class="mon" id="mon"></div><button class="btn" id="pv">‹</button><button class="btn" id="td">اليوم</button><button class="btn" id="inst" style="display:none;background:var(--acc);color:#fff;border-color:transparent">📲 تثبيت</button></div>
+</header>
+
+<!-- صفحة تسجيل الدخول -->
+<div class="sec" id="authPanel">
+  <h2>🔐 تسجيل الدخول إلى عاداتي</h2>
+  <p id="authStatus">أهلاً بك! سجّل الدخول للمتابعة</p>
+  <input id="authEmail" type="email" placeholder="البريد الإلكتروني" style="width:100%;padding:12px;margin:6px 0">
+  <input id="authPassword" type="password" placeholder="كلمة المرور" style="width:100%;padding:12px;margin:6px 0">
+  <button class="btn" id="loginBtn">تسجيل الدخول</button>
+  <p>
+    ليس لديك حساب؟
+    <button class="btn" id="showSignupBtn">إنشاء حساب جديد</button>
+  </p>
+</div>
+
+<!-- صفحة إنشاء حساب -->
+<div class="sec" id="signupPanel" style="display:none">
+  <h2>📝 إنشاء حساب جديد</h2>
+  <p id="signupStatus">أنشئ حسابك للبدء</p>
+  <input id="signupEmail" type="email" placeholder="البريد الإلكتروني" style="width:100%;padding:12px;margin:6px 0">
+  <input id="signupPassword" type="password" placeholder="كلمة المرور" style="width:100%;padding:12px;margin:6px 0">
+  <button class="btn" id="signupBtn">إنشاء الحساب</button>
+  <p>
+    لديك حساب بالفعل؟
+    <button class="btn" id="showLoginBtn">العودة لتسجيل الدخول</button>
+  </p>
+</div>
+
+<div id="appPanel" style="display:none">
+<button class="btn" id="logoutBtn" style="display:none;margin-bottom:12px">تسجيل الخروج</button>
+<div class="card" id="ins" style="display:none;margin-bottom:12px;font-size:14px"></div>
+<div class="cards" id="cards"></div>
+<div class="sec"><h2>سجل العادات اليومية</h2>
+  <div class="scroll"><table id="grid"></table></div>
+  <div class="add"><input id="newh" placeholder="أضف عادة جديدة…" maxlength="40"><button class="btn" id="addb">إضافة</button></div>
+</div>
+
+<!-- إعدادات اللغة -->
+<div class="sec">
+  <h2 id="settingsTitle">⚙️ الإعدادات</h2>
+  <label id="languageLabel" for="languageSelect">لغة التطبيق</label>
+  <select id="languageSelect" class="btn">
+    <option value="ar">العربية</option>
+    <option value="en">English</option>
+  </select>
+</div>
+
+<!-- مكافأة الأسبوع -->
+<div class="sec" id="weeklyReward">
+  <h2 id="rewardTitle">🏆 مكافأة الأسبوع</h2>
+  <p id="rewardDescription">اكتب المكافأة التي تريد الحصول عليها إذا حققت أكثر من 80%.</p>
+  <label for="rewardInput" id="rewardLabel">مكافأتي هذا الأسبوع</label>
+  <div class="add">
+    <input id="rewardInput" maxlength="100" placeholder="مثلاً: شراء كتاب جديد 📚">
+    <button class="btn" id="saveReward">حفظ</button>
+  </div>
+  <div style="margin-top:15px">
+    <div id="weeklyPercentage" style="font-size:28px;font-weight:700">0%</div>
+    <div style="height:10px;background:var(--line);border-radius:10px;overflow:hidden">
+      <div id="weeklyProgress" style="height:100%;width:0%;background:var(--acc);transition:width .3s"></div>
+    </div>
+    <p id="rewardStatus" class="note">ابدأ أسبوعك وحدد مكافأتك!</p>
+  </div>
+</div>
+
+<div class="two">
+  <div class="sec"><h2>نسبة الإنجاز اليومية</h2><div id="bars"></div></div>
+  <div class="sec"><h2>ساعات النوم</h2><div id="line"></div><div class="note">أدخل ساعات نومك في آخر صف من الجدول.</div></div>
+</div>
+<div class="sec"><h2 id="hbTitle">التقدم لكل عادة هذا الشهر</h2><div class="hb" id="hb"></div></div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+// ===== اتصال Supabase =====
+var SUPABASE_URL = "https://trltdfjxvdymrtvxoxnh.supabase.co";
+var SUPABASE_KEY = "sb_publishable_hbMzYVgyTS90O6qTc0xS1Q_UP9X2QZ0";
+var supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ===== الحالة والحفظ (لكل مستخدم + مزامنة سحابية) =====
+var K="habit-tracker-v1", S=null, uid=null, saveTimer=null;
+
+function defaultState(){
+  return {
+    habits:["الاستيقاظ المبكر","المشي ١٥ دقيقة","قراءة ١٠ صفحات","شرب ٢ لتر ماء","تعلم مهارة جديدة","ترك الهاتف قبل النوم","تنظيم الملفات والملاحظات"]
+      .map(function(n,i){return{id:"h"+i,n:n}}),
+    done:{}, sleep:{}, settings:{language:"ar"}, rewards:{}
+  };
+}
+function normalize(){
+  if(!S||!S.habits) S=defaultState();
+  S.done=S.done||{}; S.sleep=S.sleep||{};
+  S.settings=S.settings||{language:"ar"};
+  S.rewards=S.rewards||{};
+}
+function save(){
+  if(!uid) return;
+  try{localStorage.setItem(K+":"+uid,JSON.stringify(S))}catch(e){}
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(cloudSave,800);
+}
+async function cloudSave(){
+  if(!uid||!S) return;
+  var r=await supabaseClient.from("habit_data").upsert({
+    user_id:uid, data:S, updated_at:new Date().toISOString()
+  });
+  if(r.error) console.log("sync error:",r.error.message);
+}
+async function cloudLoad(){
+  var r=await supabaseClient.from("habit_data").select("data").eq("user_id",uid).maybeSingle();
+  if(r.error){ console.log("load error:",r.error.message); return; }
+  if(r.data && r.data.data){ S=r.data.data; normalize(); }
+  else { await cloudSave(); }
+}
+async function startForUser(user){
+  uid=user.id;
+  try{S=JSON.parse(localStorage.getItem(K+":"+uid))}catch(e){S=null}
+  normalize();
+  applyLanguage(); render();
+  await cloudLoad();
+  applyLanguage(); render();
+}
+
+// ===== مكافأة الأسبوع =====
+function getWeekStart(date) {
+  var d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  var offset = (d.getDay() + 1) % 7; // بداية الأسبوع: السبت
+  d.setDate(d.getDate() - offset);
+  return d;
+}
+function makeDateKey(date) {
+  return date.getFullYear() + "-" +
+    String(date.getMonth() + 1).padStart(2, "0") + "-" +
+    String(date.getDate()).padStart(2, "0");
+}
+function getCurrentWeekKey() { return makeDateKey(getWeekStart(new Date())); }
+
+function getWeeklyProgress() {
+  var today = new Date();
+  var start = getWeekStart(today);
+  var elapsedDays = Math.round(
+    (new Date(today.getFullYear(), today.getMonth(), today.getDate()) - start) / 86400000
+  ) + 1;
+  var total = S.habits.length * elapsedDays;
+  var completed = 0;
+  for (var i = 0; i < elapsedDays; i++) {
+    var day = new Date(start);
+    day.setDate(start.getDate() + i);
+    var dateKey = makeDateKey(day);
+    S.habits.forEach(function(habit) {
+      if (has(habit.id, dateKey)) completed++;
+    });
+  }
+  return total === 0 ? 0 : Math.round((completed / total) * 100);
+}
+
+var loadedRewardWeek = null;
+function renderWeeklyReward() {
+  var weekKey = getCurrentWeekKey();
+  var reward = S.rewards[weekKey] || "";
+  var percentage = getWeeklyProgress();
+  var input = document.getElementById("rewardInput");
+  if (loadedRewardWeek !== weekKey) {
+    input.value = reward;
+    loadedRewardWeek = weekKey;
+  }
+  document.getElementById("weeklyPercentage").textContent = percentage + "%";
+  document.getElementById("weeklyProgress").style.width = percentage + "%";
+  var status = document.getElementById("rewardStatus");
+  if (!reward) status.textContent = T("startWeek");
+  else if (percentage > 80) status.textContent = T("earned") + " " + reward;
+  else status.textContent = T("notEarned");
+}
+document.getElementById("saveReward").onclick = function() {
+  var reward = document.getElementById("rewardInput").value.trim();
+  if (!reward) {
+    document.getElementById("rewardStatus").textContent = T("noReward");
+    return;
+  }
+  S.rewards[getCurrentWeekKey()] = reward;
+  loadedRewardWeek = getCurrentWeekKey();
+  save();
+  renderWeeklyReward();
+};
+
+// ===== الترجمة =====
+var translations = {
+  ar: {
+    title: "عاداتي", today: "اليوم", install: "📲 تثبيت", settings: "⚙️ الإعدادات", language: "لغة التطبيق",
+    reward: "🏆 مكافأة الأسبوع",
+    rewardDescription: "اكتب المكافأة التي تريد الحصول عليها إذا حققت أكثر من 80%.",
+    rewardLabel: "مكافأتي هذا الأسبوع", rewardPlaceholder: "مثلاً: شراء كتاب جديد 📚", save: "حفظ",
+    startWeek: "ابدأ أسبوعك وحدد مكافأتك!", earned: "مبروك! لقد حققت مكافأتك 🎉",
+    notEarned: "لم تصل إلى النسبة المطلوبة بعد. استمر!", noReward: "اكتب مكافأتك أولاً.",
+    monthProgress: "إنجاز الشهر", todayProgress: "إنجاز اليوم", completions: "مرات الإنجاز",
+    streak: "أيام إنجاز متتالية", habitLog: "سجل العادات اليومية", addPlaceholder: "أضف عادة جديدة…",
+    add: "إضافة", delete: "حذف", week: "الأسبوع", sleep: "ساعات النوم", dailyRate: "نسبة الإنجاز اليومية",
+    sleepHours: "ساعات النوم", sleepNote: "أدخل ساعات نومك في آخر صف من الجدول.",
+    habitProgress: "التقدم لكل عادة هذا الشهر", noHabits: "لا توجد عادات بعد.",
+    chartNote: "كل عمود = يوم (اليوم الأول على اليمين)", chartHours: "الخطوط: 0 – 4 – 8 – 12 ساعة",
+    confirmDelete: "هل تريد حذف هذه العادة؟",
+    months: ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"]
+  },
+  en: {
+    title: "My Habits", today: "Today", install: "📲 Install", settings: "⚙️ Settings", language: "App language",
+    reward: "🏆 Weekly Reward",
+    rewardDescription: "Enter the reward you want if you achieve more than 80%.",
+    rewardLabel: "My reward this week", rewardPlaceholder: "Example: Buy a new book 📚", save: "Save",
+    startWeek: "Start your week by choosing a reward!", earned: "Congratulations! You earned your reward 🎉",
+    notEarned: "You haven't reached the required percentage yet. Keep going!", noReward: "Enter your reward first.",
+    monthProgress: "Monthly progress", todayProgress: "Today's progress", completions: "Completed check-ins",
+    streak: "Consecutive successful days", habitLog: "Daily Habit Tracker", addPlaceholder: "Add a new habit…",
+    add: "Add", delete: "Delete", week: "Week", sleep: "Sleep hours", dailyRate: "Daily completion rate",
+    sleepHours: "Sleep hours", sleepNote: "Enter your sleep hours in the last row of the table.",
+    habitProgress: "Monthly progress for each habit", noHabits: "No habits yet.",
+    chartNote: "Each bar represents one day (day 1 is on the right)", chartHours: "Lines: 0 – 4 – 8 – 12 hours",
+    confirmDelete: "Do you want to delete this habit?",
+    months: ["January","February","March","April","May","June","July","August","September","October","November","December"]
+  }
+};
+function T(name) { return translations[S.settings.language][name]; }
+
+function applyLanguage() {
+  var lang = S.settings.language;
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+
+  document.querySelector("header h1").lastChild.textContent = T("title");
+  document.getElementById("td").textContent = T("today");
+  document.getElementById("inst").textContent = T("install");
+
+  document.getElementById("settingsTitle").textContent = T("settings");
+  document.getElementById("languageLabel").textContent = T("language");
+
+  document.getElementById("rewardTitle").textContent = T("reward");
+  document.getElementById("rewardDescription").textContent = T("rewardDescription");
+  document.getElementById("rewardLabel").textContent = T("rewardLabel");
+  document.getElementById("rewardInput").placeholder = T("rewardPlaceholder");
+  document.getElementById("saveReward").textContent = T("save");
+
+  document.querySelector("#appPanel .sec h2").textContent = T("habitLog");
+  document.getElementById("newh").placeholder = T("addPlaceholder");
+  document.getElementById("addb").textContent = T("add");
+
+  var sections = document.querySelectorAll(".two .sec h2");
+  sections[0].textContent = T("dailyRate");
+  sections[1].textContent = T("sleepHours");
+  document.querySelector(".two .note").textContent = T("sleepNote");
+  document.getElementById("hbTitle").textContent = T("habitProgress");
+
+  document.getElementById("languageSelect").value = lang;
+}
+
+// ===== العرض =====
+var WC=["var(--w1)","var(--w2)","var(--w3)","var(--w4)","var(--w5)"];
+var now=new Date(),Y=now.getFullYear(),M=now.getMonth();
+function p2(n){return(n<10?"0":"")+n}
+function key(d){return Y+"-"+p2(M+1)+"-"+p2(d)}
+function dim(){return new Date(Y,M+1,0).getDate()}
+function isTodayMonth(){return now.getFullYear()==Y&&now.getMonth()==M}
+function has(id,k){return(S.done[k]||[]).indexOf(id)>-1}
+function dayPct(k){var n=S.habits.length;if(!n)return 0;var c=0;S.habits.forEach(function(h){if(has(h.id,k))c++});return c/n}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function streak(){var d=new Date(now.getFullYear(),now.getMonth(),now.getDate()),k=function(x){return x.getFullYear()+"-"+p2(x.getMonth()+1)+"-"+p2(x.getDate())};
+ if(dayPct(k(d))<1)d.setDate(d.getDate()-1);var s=0;while(S.habits.length&&dayPct(k(d))==1&&s<1000){s++;d.setDate(d.getDate()-1)}return s}
+
+function render(){
+ if(!S) return;
+ var n=dim(),H=S.habits,i;
+ document.getElementById("mon").textContent=translations[S.settings.language].months[M]+" "+Y;
+ var tot=0,doneC=0;for(i=1;i<=n;i++){H.forEach(function(h){tot++;if(has(h.id,key(i)))doneC++})}
+ var tk=isTodayMonth()?key(now.getDate()):null,tdc=0;if(tk)H.forEach(function(h){if(has(h.id,tk))tdc++});
+ document.getElementById("cards").innerHTML=
+  '<div class="card"><div class="k">'+T("monthProgress")+'</div><div class="v">'+(tot?Math.round(doneC/tot*100):0)+'%</div></div>'+
+  '<div class="card"><div class="k">'+T("todayProgress")+'</div><div class="v">'+(tk?tdc+"/"+H.length:"–")+'</div></div>'+
+  '<div class="card"><div class="k">'+T("completions")+'</div><div class="v">'+doneC+'</div></div>'+
+  '<div class="card"><div class="k">'+T("streak")+'</div><div class="v">'+streak()+' 🔥</div></div>';
+ var h='<tr><th class="nm"></th>',w;
+ for(w=0;w<Math.ceil(n/7);w++){var sp=Math.min(7,n-w*7);h+='<th colspan="'+sp+'"><div class="wk" style="background:'+WC[w%5]+'">'+T("week")+' '+(w+1)+'</div></th>'}
+ h+='<th></th></tr><tr><th class="nm"></th>';
+ for(i=1;i<=n;i++)h+='<th class="dn'+(isTodayMonth()&&i==now.getDate()?' today':'')+'">'+i+'</th>';
+ h+='<th class="pc">%</th></tr>';
+ H.forEach(function(hb){
+  var c=0;h+='<tr><td class="nm"><div style="display:flex;align-items:center"><input data-r="'+hb.id+'" value="'+esc(hb.n)+'"><button class="del" data-d="'+hb.id+'" >✕</button></div></td>';
+  for(i=1;i<=n;i++){var on=has(hb.id,key(i));if(on)c++;h+='<td><button class="c'+(on?' on':'')+'" style="'+(on?'background:'+WC[Math.floor((i-1)/7)%5]:'')+'" data-t="'+hb.id+'|'+i+'" aria-label="'+i+'"></button></td>'}
+  h+='<td class="pc">'+Math.round(c/n*100)+'%</td></tr>';
+ });
+ h+='<tr><td class="nm" style="color:var(--mute)">😴 '+T("sleep")+'</td>';
+ for(i=1;i<=n;i++){var sv=S.sleep[key(i)];h+='<td><input class="sl" type="number" inputmode="decimal" min="0" max="24" step="0.5" data-s="'+i+'" value="'+(sv==null?'':sv)+'"></td>'}
+ h+='<td class="pc"></td></tr>';
+ document.getElementById("grid").innerHTML=h;
+ charts(n);
+ document.getElementById("hb").innerHTML=H.map(function(hb){var c=0;for(var d=1;d<=n;d++)if(has(hb.id,key(d)))c++;var p=Math.round(c/n*100);
+  return '<div class="hr"><span class="t">'+esc(hb.n)+'</span><div class="bar"><i style="width:'+p+'%"></i></div><b>'+p+'%</b></div>'}).join("")||'<div class="note">'+T("noHabits")+'</div>';
+ renderWeeklyReward();
+}
+function charts(n){
+ var bw=12,W=n*bw,i,b='<svg viewBox="0 0 '+W+' 120" preserveAspectRatio="none" style="height:150px"><line x1="0" x2="'+W+'" y1="100" y2="100" stroke="var(--line)"/>';
+ for(i=1;i<=n;i++){var p=dayPct(key(i)),hh=p*96,x=(n-i)*bw;
+  b+='<rect x="'+(x+1.5)+'" y="'+(100-hh)+'" width="'+(bw-3)+'" height="'+Math.max(hh,1)+'" rx="2" fill="'+WC[Math.floor((i-1)/7)%5]+'" opacity="'+(p?1:.25)+'"/>'}
+ b+='</svg><div class="note">'+T("chartNote")+'</div>';
+ document.getElementById("bars").innerHTML=b;
+ var pts=[];for(i=1;i<=n;i++){var v=S.sleep[key(i)];if(v!=null&&v!==""&&!isNaN(v))pts.push([(n-i)*bw+bw/2,100-Math.min(v,12)/12*96,v])}
+ pts.sort(function(a,c){return a[0]-c[0]});
+ var l='<svg viewBox="0 0 '+W+' 120" preserveAspectRatio="none" style="height:150px">';
+ [0,4,8,12].forEach(function(g){var y=100-g/12*96;l+='<line x1="0" x2="'+W+'" y1="'+y+'" y2="'+y+'" stroke="var(--line)"/>'});
+ if(pts.length>1){var d="M"+pts[0][0]+" "+pts[0][1];for(i=1;i<pts.length;i++){var mx=(pts[i-1][0]+pts[i][0])/2;d+=" C"+mx+" "+pts[i-1][1]+" "+mx+" "+pts[i][1]+" "+pts[i][0]+" "+pts[i][1]}
+  l+='<path d="'+d+'" fill="none" stroke="var(--w2)" stroke-width="2" vector-effect="non-scaling-stroke"/>'}
+ pts.forEach(function(p){l+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="2.5" fill="var(--w2)"/>'});
+ l+='</svg><div class="note">'+T("chartHours")+'</div>';
+ document.getElementById("line").innerHTML=l;
+}
+
+// ===== التفاعل =====
+document.addEventListener("click",function(e){
+ if(!S) return;
+ var t=e.target.closest("[data-t]");
+ if(t){var a=t.getAttribute("data-t").split("|"),k=key(+a[1]),arr=S.done[k]||(S.done[k]=[]),ix=arr.indexOf(a[0]);ix>-1?arr.splice(ix,1):arr.push(a[0]);save();render();return}
+ var d=e.target.closest("[data-d]");
+ if(d){if(confirm(T("confirmDelete"))){S.habits=S.habits.filter(function(x){return x.id!=d.getAttribute("data-d")});save();render()}}
+});
+document.addEventListener("change",function(e){
+ if(!S) return;
+ var r=e.target.getAttribute&&e.target.getAttribute("data-r");
+ if(r){S.habits.forEach(function(x){if(x.id==r)x.n=e.target.value.trim()||x.n});save();render();return}
+ var s=e.target.getAttribute&&e.target.getAttribute("data-s");
+ if(s){var v=e.target.value;if(v==="")delete S.sleep[key(+s)];else S.sleep[key(+s)]=Math.max(0,Math.min(24,parseFloat(v)));save();charts(dim())}
+});
+function addH(){if(!S)return;var i=document.getElementById("newh"),v=i.value.trim();if(!v)return;S.habits.push({id:"h"+Date.now(),n:v});i.value="";save();render()}
+document.getElementById("addb").onclick=addH;
+document.getElementById("newh").addEventListener("keydown",function(e){if(e.key==="Enter")addH()});
+document.getElementById("pv").onclick=function(){M--;if(M<0){M=11;Y--}render()};
+document.getElementById("nx").onclick=function(){M++;if(M>11){M=0;Y++}render()};
+document.getElementById("td").onclick=function(){Y=now.getFullYear();M=now.getMonth();render()};
+document.getElementById("languageSelect").addEventListener("change", function(e) {
+  if(!S) return;
+  S.settings.language = e.target.value;
+  save();
+  applyLanguage();
+  render();
+});
+
+// ===== الشعار والتثبيت =====
+var LOGO='<svg viewBox="0 0 512 512"><defs><linearGradient id="lgg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6bff"/><stop offset="1" stop-color="#14b8d4"/></linearGradient></defs><rect width="512" height="512" rx="116" fill="url(#lgg)"/><circle cx="256" cy="256" r="150" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="28"/><path d="M256 106A150 150 0 1 1 106 256" fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round"/><path d="M178 262L238 322L340 196" fill="none" stroke="#fff" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+document.getElementById("lg").innerHTML=LOGO;
+function png(sz,cb){var im=new Image();im.onload=function(){var c=document.createElement("canvas");c.width=c.height=sz;c.getContext("2d").drawImage(im,0,0,sz,sz);cb(c.toDataURL("image/png"))};im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(LOGO.replace("<svg ",'<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" '))}
+try{png(512,function(big){png(192,function(sm){png(180,function(ap){
+ var L=function(r,h,s){var l=document.createElement("link");l.rel=r;l.href=h;if(s)l.sizes=s;document.head.appendChild(l)};
+ L("icon",sm);L("apple-touch-icon",ap,"180x180");
+ var m={name:"عاداتي",short_name:"عاداتي",lang:"ar",dir:"rtl",display:"standalone",start_url:location.href.split("#")[0],background_color:"#0d0e1a",theme_color:"#6d5efc",icons:[{src:sm,sizes:"192x192",type:"image/png"},{src:big,sizes:"512x512",type:"image/png"}]};
+ L("manifest",URL.createObjectURL(new Blob([JSON.stringify(m)],{type:"application/manifest+json"})))
+})})})}catch(e){}
+var dp=null,standalone=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
+var ib=document.getElementById("inst"),ic=document.getElementById("ins"),hid=false;
+try{hid=localStorage.getItem("ins-hide")=="1"}catch(e){}
+window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();dp=e;ib.style.display=""});
+ib.onclick=function(){if(dp){dp.prompt();dp=null;ib.style.display="none"}};
+if(!standalone&&!hid){var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+ ic.innerHTML="<div style='display:flex;justify-content:space-between;gap:10px'><div>📲 <b>لتثبيت عاداتي على تليفونك:</b> "+(ios?"اضغط زر المشاركة في سفاري ثم «إضافة إلى الشاشة الرئيسية».":"من قائمة المتصفح ⋮ اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».")+"</div><button class='del' id='insx' aria-label='إغلاق'>✕</button></div>";
+ ic.style.display="";
+ document.getElementById("insx").onclick=function(){ic.style.display="none";try{localStorage.setItem("ins-hide","1")}catch(e){}}}
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("./sw.js")
+      .then(function(){ console.log("Habaty is ready") })
+      .catch(function(error){ console.log(error) });
+  });
+}
+
+// ===== إدارة حساب المستخدم =====
+var authPanel = document.getElementById("authPanel");
+var signupPanel = document.getElementById("signupPanel");
+var appPanel = document.getElementById("appPanel");
+
+var authEmail = document.getElementById("authEmail");
+var authPassword = document.getElementById("authPassword");
+var authStatus = document.getElementById("authStatus");
+
+var signupEmail = document.getElementById("signupEmail");
+var signupPassword = document.getElementById("signupPassword");
+var signupStatus = document.getElementById("signupStatus");
+
+var signupBtn = document.getElementById("signupBtn");
+var loginBtn = document.getElementById("loginBtn");
+var logoutBtn = document.getElementById("logoutBtn");
+
+var showSignupBtn = document.getElementById("showSignupBtn");
+var showLoginBtn = document.getElementById("showLoginBtn");
+
+function showLoginPage() {
+  authPanel.style.display = "block";
+  signupPanel.style.display = "none";
+  appPanel.style.display = "none";
+}
+function showSignupPage() {
+  authPanel.style.display = "none";
+  signupPanel.style.display = "block";
+  appPanel.style.display = "none";
+}
+function updateAuthUI(user) {
+  if (user) {
+    authPanel.style.display = "none";
+    signupPanel.style.display = "none";
+    appPanel.style.display = "block";
+    logoutBtn.style.display = "inline-block";
+    if (uid !== user.id) startForUser(user);
+  } else {
+    uid = null; S = null;
+    showLoginPage();
+    logoutBtn.style.display = "none";
+  }
+}
+
+showSignupBtn.addEventListener("click", showSignupPage);
+showLoginBtn.addEventListener("click", showLoginPage);
+
+signupBtn.addEventListener("click", async function () {
+  var email = signupEmail.value.trim();
+  var password = signupPassword.value;
+  if (!email || !password) {
+    signupStatus.textContent = "اكتب البريد الإلكتروني وكلمة المرور";
+    return;
+  }
+  if (password.length < 6) {
+    signupStatus.textContent = "كلمة المرور يجب أن تكون 6 أحرف على الأقل";
+    return;
+  }
+  signupStatus.textContent = "جاري إنشاء الحساب...";
+  var result = await supabaseClient.auth.signUp({ email: email, password: password });
+  if (result.error) {
+    signupStatus.textContent = "حدث خطأ: " + result.error.message;
+    return;
+  }
+  if (result.data.session) {
+    updateAuthUI(result.data.user);
+  } else {
+    signupStatus.textContent = "تم إنشاء الحساب. راجع بريدك الإلكتروني لتأكيد الحساب، ثم سجّل الدخول.";
+  }
+});
+
+loginBtn.addEventListener("click", async function () {
+  var email = authEmail.value.trim();
+  var password = authPassword.value;
+  if (!email || !password) {
+    authStatus.textContent = "اكتب البريد الإلكتروني وكلمة المرور";
+    return;
+  }
+  authStatus.textContent = "جاري تسجيل الدخول...";
+  var result = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
+  if (result.error) {
+    authStatus.textContent = "حدث خطأ: " + result.error.message;
+    return;
+  }
+  updateAuthUI(result.data.user);
+});
+
+logoutBtn.addEventListener("click", async function () {
+  clearTimeout(saveTimer);
+  await cloudSave(); // آخر مزامنة قبل الخروج
+  var result = await supabaseClient.auth.signOut();
+  if (result.error) {
+    authStatus.textContent = "حدث خطأ: " + result.error.message;
+    return;
+  }
+  updateAuthUI(null);
+});
+
+supabaseClient.auth.getSession().then(function (result) {
+  if (result.error) {
+    authStatus.textContent = "تعذر التحقق من الحساب";
+    return;
+  }
+  var session = result.data.session;
+  updateAuthUI(session ? session.user : null);
+});
+
+supabaseClient.auth.onAuthStateChange(function (event, session) {
+  updateAuthUI(session ? session.user : null);
+});
+})();
+</script>
+</body>
+</html>
